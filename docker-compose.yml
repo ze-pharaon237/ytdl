@@ -6,4 +6,4 @@ services:
     tty: true
     volumes:
       - ./:/app
-    workdir: /app
+    user: node
