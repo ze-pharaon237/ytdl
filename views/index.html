@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZePharaon237 - YTDL</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #ytdlForm {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+    input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 10px 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    #text_result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+    #loader {
+      display: none;
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #28a745;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <form id="ytdlForm">
+    <h1>ZePharaon237 - YTDL</h1>
+    <label for="txf_find">
+      Link
+      <input type="text" name="txf_find" id="txf_find" placeholder="Enter YouTube URL">
+    </label>
+    <button id="btt_find" type="button">Find</button>
+    <div id="loader"></div>
+    <div id="text_result">Result</div>
+  </form>
+
+  <script>
+    class YTDL {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.bttFind = document.querySelector('#btt_find');
+        this.txfFind = document.querySelector('#txf_find');
+        this.txtResult = document.querySelector('#text_result');
+        this.loader = document.querySelector('#loader');
+        this.bindEvents();
+      }
+
+      bindEvents() {
+        this.bttFind.addEventListener('click', () => this.fetchVideoDetails());
+      }
+
+      fetchVideoDetails() {
+        this.toggleFormState(true);
+        const link = this.txfFind.value;
+        
+        if (!link) {
+          this.displayError('Please enter a URL.');
+          this.toggleFormState(false);
+          return;
+        }
+
+        fetch(`/gen?l=${link}`)
+          .then(response => response.json())
+          .then(data => this.displayResult(data))
+          .catch(error => this.displayError('Error fetching video details.'))
+          .finally(() => this.toggleFormState(false));
+      }
+
+      toggleFormState(disabled) {
+        this.bttFind.disabled = disabled;
+        this.txfFind.disabled = disabled;
+        this.loader.style.display = disabled ? 'block' : 'none';
+      }
+
+      displayResult(data) {
+        this.txtResult.innerHTML = `<a href="${data.link}" target="_blank">${data.name}: ${data.format}</a>`;
+      }
+
+      displayError(message) {
+        this.txtResult.textContent = message;
+      }
+    }
+
+    new YTDL();
+  </script>
+</body>
+</html>
