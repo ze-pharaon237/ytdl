@@ -4,7 +4,7 @@ const path = require('path');
 async function cleanTmpFiles() {
 
   // Chemin vers le répertoire tmp
-  const dirPath = path.join(__dirname, 'tmp');
+  const dirPath = path.join(__dirname, '../../', 'tmp');
 
   // Période de validité en millisecondes (15 minutes = 15 * 60 * 1000 ms)
   const maxAge = 1 * 60 * 1000;

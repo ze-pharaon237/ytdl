@@ -7,7 +7,8 @@
   <style>
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: #f0f2f5;
+      background: #121212;
+      color: #e0e0e0;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -15,7 +16,7 @@
       margin: 0;
     }
     #ytdlForm {
-      background: white;
+      background: #1e1e1e;
       padding: 30px;
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -26,27 +27,29 @@
     h1 {
       margin-bottom: 20px;
       font-size: 24px;
-      color: #333;
+      color: #bb86fc;
     }
     label {
       display: block;
       margin-bottom: 10px;
       font-weight: bold;
-      color: #555;
+      color: #e0e0e0;
     }
     input {
       width: calc(100% - 20px);
       padding: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #333;
       border-radius: 5px;
       margin-bottom: 20px;
       font-size: 16px;
+      background: #333;
+      color: #e0e0e0;
     }
     button {
       width: 100%;
       padding: 10px 15px;
-      background-color: #28a745;
-      color: white;
+      background-color: #bb86fc;
+      color: #121212;
       border: none;
       border-radius: 5px;
       font-size: 16px;
@@ -54,21 +57,21 @@
       transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #218838;
+      background-color: #a95bda;
     }
     button:disabled {
-      background-color: #ccc;
+      background-color: #444;
       cursor: not-allowed;
     }
     #text_result {
       margin-top: 20px;
       font-size: 18px;
-      color: #333;
+      color: #e0e0e0;
     }
     #loader {
       display: none;
       border: 8px solid #f3f3f3;
-      border-top: 8px solid #28a745;
+      border-top: 8px solid #bb86fc;
       border-radius: 50%;
       width: 40px;
       height: 40px;
@@ -121,7 +124,7 @@
           return;
         }
 
-        fetch(`/gen?l=${link}`)
+        fetch(`/api/gen?l=${link}`)
           .then(response => response.json())
           .then(data => this.displayResult(data))
           .catch(error => this.displayError('Error fetching video details.'))

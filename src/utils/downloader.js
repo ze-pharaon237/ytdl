@@ -14,9 +14,10 @@ async function fileExist(path) {
 
 async function downloader(videoLink) {
   try {
+    if (!videoLink) return;
     const info = await ytdl.getInfo(videoLink);
     
-    if (await fileExist('./tmp/' + info.videoDetails.videoId + '.mp4')) {
+    if (await fileExist('../../tmp/' + info.videoDetails.videoId + '.mp4')) {
       return {
         link: '/video/' + info.videoDetails.videoId + '.mp4',
         name: info.videoDetails.title,
@@ -33,7 +34,7 @@ async function downloader(videoLink) {
 
       ytdl(videoLink, { format: dl })
         .pipe(
-          fs.createWriteStream('./tmp/' + filename)
+          fs.createWriteStream('../../tmp/' + filename)
         );
       return {
         link: '/video/' + filename,

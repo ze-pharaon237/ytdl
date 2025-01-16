@@ -1,9 +1,10 @@
 const express = require('express');
 const path = require('path');
-const { downloader } = require('./downloader');
-const { cleanTmpFiles } = require('./cron');
+const { downloader } = require('../utils/downloader');
+const { cleanTmpFiles } = require('../utils/cron');
+
 const app = express();
-const port = 3000;
+app.use(express.static(path.join(__dirname, '..', '..', 'public')));
 
 app.use('/video/:key', (req, res) => {
     const filename = req.params.key;
@@ -13,7 +14,7 @@ app.use('/video/:key', (req, res) => {
     cleanTmpFiles();
 });
 
-app.get('/gen', async (req, res) => {
+app.get('/api/gen', async (req, res) => {
     console.log(req.query);
 
     let result = await downloader(req.query.l ?? 'null');
@@ -24,14 +25,17 @@ app.get('/gen', async (req, res) => {
 app.get('/', async (req, res) => {
     console.log(req.query);
 
-    res.sendFile(path.join(__dirname, '/views/index.html'));
+    res.sendFile(path.join(__dirname, '../../','/public/index.html'));
     cleanTmpFiles();
 });
 
-app.get('/clean', async (req, res) => {
-    cleanTmpFiles();
-});
-
-app.listen(port, () => {
-    console.log(`App listening on port ${port}`)
+app.get('/test', async  (req, res) => {
+  res.send('OK');
 })
+
+app.get('/api/clean', async (req, res) => {
+    cleanTmpFiles();
+    res.send('OK');
+});
+
+module.exports = app;
