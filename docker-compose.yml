@@ -1,9 +1,0 @@
-services:
-  app:
-    image: node:23-alpine
-    ports: 
-      - 3000:3000
-    tty: true
-    volumes:
-      - ./:/app
-    user: node
