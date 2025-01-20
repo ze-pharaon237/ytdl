@@ -15,6 +15,8 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+Download flutter sdk : https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.2-stable.tar.xz in .devcontainer folder and rename to flutter.tar.xz
+
 Run web server : flutter run -d web-server --web-port=8001 --web-hostname 0.0.0.0
 
-Run on device : adb pair, puis adb connect et enfin flutter run
+Run on device : adb pair 192.168.1.30:, puis adb connect 192.168.1.30: et enfin flutter run

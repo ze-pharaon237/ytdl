@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
+import 'package:provider/provider.dart';
+import 'package:yt_downloader/models/downloader_model.dart';
 import 'package:yt_downloader/utils/downloader.dart';
 
 class FormWidget extends StatefulWidget {
@@ -12,6 +14,7 @@ class FormWidget extends StatefulWidget {
 class _FormWidgetState extends State<FormWidget> {
   final _formKey = GlobalKey<FormState>();
   final _linkController = TextEditingController();
+  int cpt = 0;
 
   @override 
   void dispose() { 
@@ -22,15 +25,18 @@ class _FormWidgetState extends State<FormWidget> {
   @override
   void initState() {
     super.initState();
+
     FlutterSharingIntent.instance.getMediaStream().listen((value) {
       setState(() {
         _linkController.text = value.first.value!;
       });
     });
     FlutterSharingIntent.instance.getInitialSharing().then((value) {
-      setState(() {
-        _linkController.text = value.first.value!;
-      });
+      if (value.firstOrNull != null) {
+        setState(() {
+          _linkController.text = value.first.value!;
+        });
+      }
     });
   }
 
@@ -39,26 +45,34 @@ class _FormWidgetState extends State<FormWidget> {
       // Process data.
       
       try {
-        var result = Downloader(_linkController.text);
-        result = await result.getMetadata();
-        var path = await result.download();
+        var model = Provider.of<DownloaderModel>(context, listen: false);
+        var result = await Downloader(model, _linkController.text).getMetadata();
+        model.setLastVideo(result);
+        
+        // var path = await result.download();
+        // ScaffoldMessenger.of(context).showSnackBar( 
+        //   SnackBar(content: Text(path))
+        // );
         ScaffoldMessenger.of(context).showSnackBar( 
-          SnackBar(content: Text(path))
-        );
-        ScaffoldMessenger.of(context).showSnackBar( 
-          SnackBar(content: Text("Téléchargement terminé"))
+          SnackBar(content: Text('Find: ${result.title}'))
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar( 
           SnackBar(content: Text(e.toString()))
         );
       }
-      // print(result);
+
+      // var model = Provider.of<DownloaderModel>(context, listen: false); 
+      // model.updateCount(model.counter + 1, 100);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    var downloaderModel = context.watch<DownloaderModel>();
+    var isLoading = downloaderModel.isLoading;
+    var status = downloaderModel.status;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -66,6 +80,8 @@ class _FormWidgetState extends State<FormWidget> {
           TextFormField(
             controller: _linkController,
             decoration: InputDecoration(labelText: 'Entrer or paste the youtube link'),
+            enabled: !isLoading,
+            autofocus: true,
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'This can\'t be empty';
@@ -74,9 +90,10 @@ class _FormWidgetState extends State<FormWidget> {
             }, 
           ),
           ElevatedButton(
-            onPressed: onFormSubmit, 
-            child: const Text('Download')
-          )
+            onPressed: isLoading ? null : onFormSubmit,
+            child: Text('Find')
+          ),
+          Text(status.toString())
         ],
       ),
     );

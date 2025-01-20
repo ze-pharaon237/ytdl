@@ -1,7 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE "/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE "/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
     <application
         android:label="YT Downloader"
         android:name="${applicationName}"
@@ -28,6 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
+            <!-- Use data share system -->
             <intent-filter>
                <action android:name="android.intent.action.SEND" />
                <category android:name="android.intent.category.DEFAULT" />
@@ -49,6 +49,10 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="video/mp4" />
         </intent>
     </queries>
 </manifest>
