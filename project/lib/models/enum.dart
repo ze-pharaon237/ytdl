@@ -2,6 +2,8 @@ enum DMStatus {
   pending(''),
   searching('Searching...'),
   searchingComplete('Searching complete'),
+  createStream('Create stream ...'),
+  checkDestinationDir('check destination directory ...'),
   downloading('Downloading...'),
   complete('Download complete!'),
   failed('Download failed!');
@@ -12,6 +14,6 @@ enum DMStatus {
 
   @override
   String toString() {
-    return this.message;
+    return message;
   }
 }

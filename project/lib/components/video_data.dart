@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yt_downloader/models/downloader_model.dart';
 import 'package:yt_downloader/models/enum.dart';
-import 'package:yt_downloader/utils/downloader.dart';
+import 'package:yt_downloader/services/downloader_service.dart';
 
 class VideoDataWidget extends StatefulWidget {
   const VideoDataWidget({super.key});
@@ -14,7 +14,7 @@ class VideoDataWidget extends StatefulWidget {
 class _VideoDataWidgetState extends State<VideoDataWidget> {
   startDownloading() {
     var model = context.read<DownloaderModel>();
-    Downloader(model, '', model.lastVideo).download();
+    DownloaderService(model).download(model.lastVideo!);
   }
 
   @override

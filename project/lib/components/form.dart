@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_sharing_intent/flutter_sharing_intent.dart';
 import 'package:provider/provider.dart';
 import 'package:yt_downloader/models/downloader_model.dart';
-import 'package:yt_downloader/utils/downloader.dart';
+import 'package:yt_downloader/services/downloader_service.dart';
 
 class FormWidget extends StatefulWidget {
   const FormWidget({super.key});
@@ -46,9 +46,8 @@ class _FormWidgetState extends State<FormWidget> {
       
       try {
         var model = Provider.of<DownloaderModel>(context, listen: false);
-        var result = await Downloader(model, _linkController.text).getMetadata();
+        var result = await DownloaderService(model).getMetadata(_linkController.text);
         model.setLastVideo(result);
-        
         // var path = await result.download();
         // ScaffoldMessenger.of(context).showSnackBar( 
         //   SnackBar(content: Text(path))

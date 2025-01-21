@@ -16,50 +16,45 @@ class DownloaderModel with ChangeNotifier {
   String get lastDownloadPath => _lastDownloadPath;
 
   void init() {
-    _counter = 0;
-    _isLoading = false;
-    _status = DMStatus.pending;
-    _lastDownloadPath = '';
-    _lastVideo = null;
-    notifyListeners();
+    _updateState(
+      counter: 0,
+      isLoading: false,
+      status: DMStatus.pending,
+      lastDownloadPath: '',
+      lastVideo: null,
+    );
   }
 
-  void setSearching() {
-    _status = DMStatus.searching;
-    notifyListeners();
+  void setStatusSearching() => _updateState(status: DMStatus.searching);
+  void setStatusSearchingComplete() => _updateState(status: DMStatus.searchingComplete);
+  void setStatusCreateStream() => _updateState(status: DMStatus.createStream);
+  void setStatusCheckDestinationDir() => _updateState(status: DMStatus.checkDestinationDir);
+  void setStatusComplete() => _updateState(status: DMStatus.complete);
+  void setStatusFailed() => _updateState(status: DMStatus.failed);
+
+  void startLoading() => _updateState(isLoading: true);
+  void stopLoading() => _updateState(isLoading: false);
+
+  void updateDownloadCounter(int value, int max) {
+    _counter = ((value * 100) / max).toInt();
+    _updateState(status: DMStatus.downloading);
   }
 
-  void setSearchingComplete() {
-    _status = DMStatus.searchingComplete;
+  void setLastDownloadPath(String path) => _updateState(lastDownloadPath: path);
+  void setLastVideo(Video vid) => _updateState(lastVideo: vid);
+
+  void _updateState({
+    int? counter,
+    bool? isLoading,
+    DMStatus? status,
+    String? lastDownloadPath,
+    Video? lastVideo,
+  }) {
+    _counter = counter ?? _counter;
+    _isLoading = isLoading ?? _isLoading;
+    _status = status ?? _status;
+    _lastDownloadPath = lastDownloadPath ?? _lastDownloadPath;
+    _lastVideo = lastVideo ?? _lastVideo;
     notifyListeners();
   }
-
-  void startLoading() {
-    _isLoading = true;
-    _status = DMStatus.downloading;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    _isLoading = false;
-    _status = DMStatus.complete;
-    notifyListeners();
-  }
-
-  void updateCount(int value, int max) {
-    _counter = ((value * 100)/max).toInt() ;
-    _status = DMStatus.downloading;
-    notifyListeners();
-  }
-
-  void setLastDownloadPath(String path) {
-    _lastDownloadPath = path;
-    notifyListeners();
-  }
-
-  void setLastVideo(Video vid) {
-    _lastVideo = vid;
-    notifyListeners();
-  }
-
 }
