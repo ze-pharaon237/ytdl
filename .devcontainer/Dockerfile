@@ -8,7 +8,7 @@ ENV LANG C.UTF-8
 RUN  apt update \
 	&& apt install -y sudo \
 	&& apt install -y openjdk-17-jdk-headless --no-install-recommends \
-	&& apt install -y wget curl git xz-utils zip unzip --no-install-recommends
+	&& apt install -y wget curl iputils-ping git xz-utils zip unzip --no-install-recommends
 
 	# Clean Up
 RUN	apt-get autoremove -y \

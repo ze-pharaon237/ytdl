@@ -3,6 +3,7 @@ import 'package:yt_downloader/components/app_bar_menu.dart';
 import 'package:yt_downloader/components/form.dart';
 import 'package:yt_downloader/components/progress_bar.dart';
 import 'package:yt_downloader/components/video_data.dart';
+import 'package:yt_downloader/components/videos_list.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -19,10 +20,10 @@ class HomePage extends StatelessWidget {
           child: ListView(
             children: [
               FormWidget(),
-              SizedBox(height: 25),
               VideoDataWidget(),
-              SizedBox(height: 25),
               ProgressBarWidget(),
+              VideosListWidget(),
+              Text('-------- end ---------'),
             ],
           ),
         ));

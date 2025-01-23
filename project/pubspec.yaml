@@ -44,9 +44,11 @@ dependencies:
   # to receive share content
   flutter_sharing_intent: ^1.1.0
   # ton open file like video after download
-  open_file_plus: ^3.4.1+1
+  open_file: ^3.5.10
   # persistent storage for simple data
   shared_preferences: ^2.3.5
+  # get thumbnail of a local video
+  get_thumbnail_video: ^0.7.3
 
 dev_dependencies:
   flutter_test:
