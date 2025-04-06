@@ -1,0 +1,27 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/lucashilles/flutter-dev-container
+{
+	"name": "Project",
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+  "service": "app",
+  "workspaceFolder": "/workspaces",
+	// Add the IDs of extensions you want installed when the container is created.
+  "customizations": {
+		"vscode": {
+			"extensions": [
+      "dart-code.dart-code",
+      "dart-code.flutter",
+      "alexisvt.flutter-snippets",
+      "nash.awesome-flutter-snippets"
+      ]
+    }
+	},
+	// This command create an example project after the container is created.
+	// "postCreateCommand": "flutter create what_s_the_weather",
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	//"forwardPorts": [],
+	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "ubuntu"
+}
