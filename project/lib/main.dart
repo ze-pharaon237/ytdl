@@ -1,9 +1,14 @@
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yt_downloader/models/downloader_model.dart';
 import 'package:yt_downloader/pages/home.dart';
 
 void main() {
+  if (kDebugMode) {
+    fixDebugVMServiceLog();
+  }
   runApp(const MyApp());
 }
 
@@ -40,4 +45,11 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> fixDebugVMServiceLog() async {
+  ServiceProtocolInfo serviceProtocolInfo = await Service.getInfo();
+  final message =
+      'The Dart VM service is listening on ${serviceProtocolInfo.serverUri}';
+  throw Exception(message);
 }

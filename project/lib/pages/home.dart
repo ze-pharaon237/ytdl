@@ -16,14 +16,14 @@ class HomePage extends StatelessWidget {
           actions: [AppBarMenuWidget()],
         ),
         body: Padding(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.all(0),
           child: ListView(
             children: [
               FormWidget(),
               VideoDataWidget(),
               ProgressBarWidget(),
               VideosListWidget(),
-              Text('-------- end ---------'),
+              SizedBox(height: 25)
             ],
           ),
         ));

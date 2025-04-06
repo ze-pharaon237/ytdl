@@ -20,3 +20,7 @@ Download flutter sdk : https://storage.googleapis.com/flutter_infra_release/rele
 Run web server : flutter run -d web-server --web-port=8001 --web-hostname 0.0.0.0
 
 Run on device : adb pair 192.168.1.30:, puis adb connect 192.168.1.30: et enfin flutter run
+
+
+adb shell setprop log.tag I
+adb shell -x logcat -v time 
