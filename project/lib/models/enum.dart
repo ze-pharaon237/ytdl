@@ -1,4 +1,4 @@
-enum DMStatus {
+enum DownloaderStatus {
   pending(''),
   searching('Searching...'),
   searchingComplete('Searching complete'),
@@ -10,7 +10,7 @@ enum DMStatus {
 
   final String message;
 
-  const DMStatus(this.message);
+  const DownloaderStatus(this.message);
 
   @override
   String toString() {

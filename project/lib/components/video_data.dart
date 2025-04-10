@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yt_downloader/models/downloader_model.dart';
+import 'package:yt_downloader/providers/downloader_provider.dart';
 import 'package:yt_downloader/models/enum.dart';
 import 'package:yt_downloader/services/downloader_service.dart';
 
@@ -13,16 +13,16 @@ class VideoDataWidget extends StatefulWidget {
 
 class _VideoDataWidgetState extends State<VideoDataWidget> {
   startDownloading() {
-    var model = context.read<DownloaderModel>();
-    DownloaderService(model).download(model.lastVideo!);
+    final provider = context.read<DownloaderProvider>();
+    DownloaderService.download(provider);
   }
 
   @override
   Widget build(BuildContext context) {
-    var model = context.watch<DownloaderModel>();
-    var video = model.lastVideo;
-    var status = model.status;
-    return video == null
+    final provider = context.watch<DownloaderProvider>();
+    var video = provider.lastVideo;
+    var status = provider.status;
+    return (video == null || status == DownloaderStatus.complete)
         ? Container()
         : Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,18 +31,18 @@ class _VideoDataWidgetState extends State<VideoDataWidget> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
-                  video.thumbnails.standardResUrl,
+                  video.thumbnail,
                   fit: BoxFit.fitWidth,
                 ),
               ),
               Text('Title: ${video.title}'),
-              Text('Duration: ${video.duration?.inMinutes} minutes'),
+              Text(video.description),
+              Text('Duration: ${video.duration}'),
               Text('Author: ${video.author}'),
-              Text('Publish at: ${video.uploadDateRaw}'),
-              (status == DMStatus.downloading || status == DMStatus.complete)
+              Text('Publish at: ${video.updateDate}'),
+              (status == DownloaderStatus.downloading || status == DownloaderStatus.complete)
                   ? Container()
-                  : ElevatedButton(
-                      onPressed: startDownloading, child: Text('Download')),
+                  : ElevatedButton(onPressed: startDownloading, child: Text('Download')),
             ],
           );
   }

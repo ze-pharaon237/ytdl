@@ -1,14 +1,24 @@
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
-import 'package:yt_downloader/models/downloader_model.dart';
+import 'package:yt_downloader/providers/downloader_provider.dart';
 import 'package:yt_downloader/pages/home.dart';
 
-void main() {
+void main() async {
   if (kDebugMode) {
     fixDebugVMServiceLog();
   }
+
+  // enable inAppWebView
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // enable inspection
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    await InAppWebViewController.setWebContentsDebuggingEnabled(true);
+  }
+
   runApp(const MyApp());
 }
 
@@ -19,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DownloaderModel(),
+      create: (_) => DownloaderProvider(),
       child: MaterialApp(
         title: 'YT Downloader',
         theme: ThemeData(
