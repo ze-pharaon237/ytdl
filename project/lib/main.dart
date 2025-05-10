@@ -5,6 +5,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 import 'package:yt_downloader/providers/downloader_provider.dart';
 import 'package:yt_downloader/pages/home.dart';
+import 'package:yt_downloader/providers/video_provider.dart';
 
 void main() async {
   if (kDebugMode) {
@@ -15,7 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // enable inspection
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+  if (kDebugMode && kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     await InAppWebViewController.setWebContentsDebuggingEnabled(true);
   }
 
@@ -28,8 +29,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DownloaderProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DownloaderProvider()), 
+        ChangeNotifierProvider(create: (_) => VideoProvider())
+      ],
       child: MaterialApp(
         title: 'YT Downloader',
         theme: ThemeData(
@@ -59,7 +63,6 @@ class MyApp extends StatelessWidget {
 
 Future<void> fixDebugVMServiceLog() async {
   ServiceProtocolInfo serviceProtocolInfo = await Service.getInfo();
-  final message =
-      'The Dart VM service is listening on ${serviceProtocolInfo.serverUri}';
+  final message = 'The Dart VM service is listening on ${serviceProtocolInfo.serverUri}';
   throw Exception(message);
 }

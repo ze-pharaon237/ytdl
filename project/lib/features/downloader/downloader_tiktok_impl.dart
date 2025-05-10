@@ -11,8 +11,8 @@ import 'package:yt_downloader/features/downloader/downloader.dart';
 class TiktokDownloader extends Downloader {
   late HeadlessInAppWebView? headlessWebView;
   CookieManager cookieManager = CookieManager.instance();
-  final tiktokCookieDomain = "https://www.tiktok.com";
-  final downloadURlQuerySelector = 'document.querySelector("video").children[0].src';
+  final tiktokCookieDomain = 'https://www.tiktok.com';
+  final downloadURlQuerySelector = "document.querySelector('video').children[0].src";
 
   TiktokDownloader(super.downloaderProvider);
 
@@ -41,14 +41,19 @@ class TiktokDownloader extends Downloader {
 
   @override
   Future<void> download() async {
-    downloaderProvider.init(video: downloaderProvider.lastVideo);
+    final video = downloaderProvider.lastVideo;
+    downloaderProvider.init();
+    downloaderProvider.setLastVideo(video!);
     downloaderProvider.startLoading();
+    downloaderProvider.setStatusGetVideo();
+    downloaderProvider.setStatusDetail('tiktok: Create headlessWB');
     await _createHeadlessWebView(downloaderProvider.lastVideo!.sourceUrl);
+    downloaderProvider.setStatusDetail('tiktok: Run headlessWB');
     await headlessWebView?.run();
 
-    Timer(Duration(seconds: 30), () async {
+    Timer(Duration(seconds: 10), () async {
       if (headlessWebView != null && headlessWebView!.isRunning()) {
-        log("Timeout reached, stopping WebView...");
+        log('Timeout reached, stopping WebView...');
         _abortDownload();
       }
     });
@@ -69,21 +74,24 @@ class TiktokDownloader extends Downloader {
         preferredContentMode: UserPreferredContentMode.DESKTOP,
       ),
       onTitleChanged: (controller, title) async {
-        if (!isRedirect && !title!.contains("TikTok - Make Your Day") && (await controller.getProgress() ?? 0) >= 100) {
+        downloaderProvider.setStatusDetail("tiktok: catch title changed on $title");
+        if (!isRedirect && !title!.contains('TikTok - Make Your Day') && (await controller.getProgress() ?? 0) >= 100) {
           isRedirect = true;
           final String? downloadUrl = await controller.evaluateJavascript(source: downloadURlQuerySelector);
+          downloaderProvider.setStatusDetail('tiktok: onTitleChanged with expected title');
 
           if (downloadUrl != null) {
+          downloaderProvider.setStatusDetail('tiktok: Url found :');
             final cookies = (await cookieManager.getCookies(url: WebUri(tiktokCookieDomain)))
                 .where((c) => c.isHttpOnly == true)
-                .map((co) => "${co.name}=${co.value}")
-                .join("; ");
-            log("cookie: $cookies");
+                .map((co) => '${co.name}=${co.value}')
+                .join('; ');
+            log('cookie: $cookies');
             headlessWebView?.dispose();
             _fetchVideo(downloadUrl, cookies);
           } else {
             _abortDownload();
-            throw Exception("Enable to find downloadUrl.");
+            throw Exception('Enable to find downloadUrl.');
           }
         }
       },
@@ -93,24 +101,29 @@ class TiktokDownloader extends Downloader {
   void _fetchVideo(String downloadUrl, String cookie) async {
     final url = Uri.parse(downloadUrl);
     HttpClient client = HttpClient();
+    downloaderProvider.setStatusGetVideo();
 
     try {
       final request = await client.getUrl(url);
       request.headers.set(HttpHeaders.cookieHeader, cookie);
+
+      downloaderProvider.setStatusDetail('tiktok: Send video request');
       final response = await request.close();
 
       if (response.statusCode == HttpStatus.ok) {
-        log("request OK ++++++++++++++++++++, next");
+        downloaderProvider.setStatusDetail('tiktok: Got response OK');
         final totalBytes = response.contentLength;
 
-        downloaderProvider.setStatusCreateStream();
+        downloaderProvider.setStatusDetail('tiktok: Create stream');
         Stream<List<int>> stream = response.asBroadcastStream();
 
+        downloaderProvider.setStatusDownloading();
         await downloadFile(downloaderProvider.lastVideo!, stream, totalBytes);
         downloaderProvider.stopLoading();
         downloaderProvider.setStatusComplete();
       } else {
-        log("request fail with code ${response.statusCode}");
+        log('request fail with code ${response.statusCode}');
+        throw Exception('request fail with code ${response.statusCode}');
       }
     } catch (e) {
       downloaderProvider.stopLoading();

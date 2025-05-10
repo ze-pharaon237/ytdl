@@ -30,6 +30,7 @@ abstract class Downloader {
 
     var file = File('$downloadsPath/${video.title}.mp4');
     var fileStream = file.openWrite();
+    downloaderProvider.setLastDownloadPath(file.path);
 
     int downloadedBytes = 0;
 
@@ -41,6 +42,5 @@ abstract class Downloader {
 
     await fileStream.flush();
     await fileStream.close();
-    downloaderProvider.setLastDownloadPath(file.path);
   }
 }

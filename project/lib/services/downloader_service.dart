@@ -28,6 +28,7 @@ class DownloaderService {
         provider.setStatusFailed();
         throw UnimplementedError('Enable to find downloader for link: "$link"');
       } else {
+        provider.init();
         return await downloader.getMetadata(link);
       }
     } catch (e) {

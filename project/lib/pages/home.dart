@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yt_downloader/components/app_bar_menu.dart';
 import 'package:yt_downloader/components/form.dart';
-import 'package:yt_downloader/components/progress_bar.dart';
 import 'package:yt_downloader/components/video_data.dart';
 import 'package:yt_downloader/components/videos_list.dart';
 
@@ -21,7 +20,6 @@ class HomePage extends StatelessWidget {
             children: [
               FormWidget(),
               VideoDataWidget(),
-              ProgressBarWidget(),
               VideosListWidget(),
               SizedBox(height: 25)
             ],

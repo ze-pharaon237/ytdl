@@ -34,16 +34,18 @@ class YoutubeDownloader extends Downloader {
   Future<void> download() async {
     final metadata = downloaderProvider.lastVideo!;
     try {
-      downloaderProvider.init(video: metadata);
+      downloaderProvider.init();
       downloaderProvider.setLastVideo(metadata);
       downloaderProvider.startLoading();
 
-      downloaderProvider.setStatusCreateStream();
+      downloaderProvider.setStatusGetVideo();
+      downloaderProvider.setStatusDetail("Youtube: create stream");
       var manifest = await _yt.videos.streamsClient.getManifest(metadata.id, ytClients: [YoutubeApiClient.android, YoutubeApiClient.androidVr]);
       var streamInfo = manifest.muxed.withHighestBitrate();
       int totalBytes = streamInfo.size.totalBytes.toInt();
       var stream = _yt.videos.streamsClient.get(streamInfo);
 
+      downloaderProvider.setStatusDownloading();
       await downloadFile(metadata, stream, totalBytes);
       downloaderProvider.stopLoading();
       downloaderProvider.setStatusComplete();
