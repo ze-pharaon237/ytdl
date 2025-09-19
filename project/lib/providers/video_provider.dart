@@ -13,6 +13,7 @@ class VideoProvider with ChangeNotifier {
   }
 
   Future<void> reloadVideos() async {
+    await LocalVideoService.cleanThumbnails();
     _videos = await LocalVideoService.loadFromFolder();
     notifyListeners();
   }

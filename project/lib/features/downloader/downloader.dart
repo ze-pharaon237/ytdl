@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:yt_downloader/models/common_video.dart';
 import 'package:yt_downloader/providers/downloader_provider.dart';
 import 'package:yt_downloader/services/settings_service.dart';
+import 'package:yt_downloader/utils/tools.dart';
 
 abstract class Downloader {
   final DownloaderProvider downloaderProvider;
@@ -28,7 +29,7 @@ abstract class Downloader {
       return;
     }
 
-    var file = File('$downloadsPath/${video.title}.mp4');
+    var file = File('$downloadsPath/${sanitizeFileName(video.title)}.mp4');
     var fileStream = file.openWrite();
     downloaderProvider.setLastDownloadPath(file.path);
 

@@ -16,3 +16,16 @@ String formatDate(DateTime date) {
          "${date.minute.toString().padLeft(2, '0')}:"
          "${date.second.toString().padLeft(2, '0')}";
 }
+
+String sanitizeFileName(String fileName) {
+  // Liste des caractères interdits
+  final RegExp invalidChars = RegExp(r'[<>:"/\\|?*]');
+  
+  // Remplacement des caractères interdits par un tiret
+  fileName = fileName.replaceAll(invalidChars, '-');
+  
+  // Suppression des espaces inutiles et normalisation
+  fileName = fileName.trim().replaceAll(RegExp(r'\s+'), ' ');
+
+  return fileName;
+}

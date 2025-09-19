@@ -11,23 +11,40 @@ class VideosListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<VideoProvider>(
-      builder: (context, videoProvider, child) => _buildVideosList(videoProvider.videos),
+      builder: (context, videoProvider, child) => _buildVideosList(context, videoProvider.videos),
     );
   }
 
-  Widget _buildVideosList(List<FileSystemEntity> videos) {
+  Widget _buildVideosList(BuildContext context, List<FileSystemEntity> videos) {
+    final theme = Theme.of(context); // Get the current theme
+
     if (videos.isEmpty) {
-      return const Center(child: Text("Aucun fichier vidéo trouvé."));
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              "Aucun fichier vidéo trouvé.",
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color), // Adaptive text color
+            ),
+          ),
+        ),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: videos.length,
-      itemBuilder: (context, index) {
-        final entity = videos[index];
-        return ContainerShadowWidget(child: VideoListItemWidget(entity: entity));
-      },
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final entity = videos[index];
+          return ContainerShadowWidget(
+            margin: 5,
+            padding: 5,
+            decorationColor: theme.colorScheme.surfaceContainerLow, // Adaptive background color
+            child: VideoListItemWidget(entity: entity),
+          );
+        },
+        childCount: videos.length,
+      ),
     );
   }
 }

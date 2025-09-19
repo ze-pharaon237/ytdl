@@ -9,21 +9,28 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context); // Get the current theme
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Yt Downloader'),
-          actions: [AppBarMenuWidget()],
-        ),
-        body: Padding(
-          padding: EdgeInsets.all(0),
-          child: ListView(
-            children: [
-              FormWidget(),
-              VideoDataWidget(),
-              VideosListWidget(),
-              SizedBox(height: 25)
-            ],
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300.0,
+            floating: true,
+            flexibleSpace: FlexibleSpaceBar(
+                title: Text(
+                  'YT Downloader',
+                  style: TextStyle(color: theme.colorScheme.primaryFixedDim), // Dynamic text color
+                ),
+                background: Image.asset('assets/images/header.png', fit: BoxFit.cover)),
+            actions: [AppBarMenuWidget()],
           ),
-        ));
+          SliverToBoxAdapter(child: FormWidget()),
+          SliverToBoxAdapter(child: VideoDataWidget()),
+          VideosListWidget(),
+          SliverPadding(padding: const EdgeInsets.only(top: 25)),
+        ],
+      ),
+    );
   }
 }

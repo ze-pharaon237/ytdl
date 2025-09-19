@@ -26,9 +26,9 @@ class FileService {
     }
   }
 
-  static Future<List<FileSystemEntity>> loadDirectoryContent(String dirPath) async {
+  static Future<List<FileSystemEntity>> loadDirectoryContent(String dirPath, String extention) async {
     var list = Directory(dirPath).listSync(recursive: false, followLinks: false);
-    return list.where((entity) => entity.path.endsWith('.mp4')).toList();
+    return list.where((entity) => entity.path.endsWith(extention)).toList();
   }
 
   static Future<FileSystemEntity?> loadFile(String path) async {
