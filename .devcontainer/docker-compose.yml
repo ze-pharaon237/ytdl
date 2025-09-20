@@ -2,9 +2,7 @@ services:
   app:
     build:
       context: .
-    ports: 
-      - 8001:8001
-    tty: true
     volumes:
       - ../project:/workspaces
     working_dir: /workspaces
+    tty: true

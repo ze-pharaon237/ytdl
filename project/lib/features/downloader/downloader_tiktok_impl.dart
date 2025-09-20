@@ -11,8 +11,7 @@ import 'package:yt_downloader/features/downloader/downloader.dart';
 class TiktokDownloader extends Downloader {
   late HeadlessInAppWebView? headlessWebView;
   CookieManager cookieManager = CookieManager.instance();
-  final tiktokCookieDomain = 'https://www.tiktok.com';
-  final downloadURlQuerySelector = "document.querySelector('video').children[0].src";
+  static final tiktokCookieDomain = 'https://www.tiktok.com';
 
   TiktokDownloader(super.downloaderProvider);
 
@@ -61,51 +60,47 @@ class TiktokDownloader extends Downloader {
 
   void _abortDownload() {
     downloaderProvider.stopLoading();
+    downloaderProvider.setStatusDetail("Download timeout - abord");
     downloaderProvider.setStatusFailed();
     headlessWebView?.dispose();
   }
 
   Future<void> _createHeadlessWebView(String url) async {
-    var isRedirect = false;
     headlessWebView = HeadlessInAppWebView(
       initialUrlRequest: URLRequest(url: WebUri(url)),
       initialSettings: InAppWebViewSettings(
         isInspectable: kDebugMode,
         preferredContentMode: UserPreferredContentMode.DESKTOP,
       ),
-      onTitleChanged: (controller, title) async {
-        downloaderProvider.setStatusDetail("tiktok: catch title changed on $title");
-        if (!isRedirect && !title!.contains('TikTok - Make Your Day') && (await controller.getProgress() ?? 0) >= 100) {
-          isRedirect = true;
-          final String? downloadUrl = await controller.evaluateJavascript(source: downloadURlQuerySelector);
-          downloaderProvider.setStatusDetail('tiktok: onTitleChanged with expected title');
-
-          if (downloadUrl != null) {
+      onLoadResource: (controller, resource) async {
+        if (resource.url != null && resource.url!.rawValue.contains("webapp-prime.tiktok")) {
+          final downloadUrl = resource.url!.rawValue;
+          log('downloadUrl: $downloadUrl');
           downloaderProvider.setStatusDetail('tiktok: Url found :');
-            final cookies = (await cookieManager.getCookies(url: WebUri(tiktokCookieDomain)))
-                .where((c) => c.isHttpOnly == true)
-                .map((co) => '${co.name}=${co.value}')
-                .join('; ');
-            log('cookie: $cookies');
-            headlessWebView?.dispose();
-            _fetchVideo(downloadUrl, cookies);
-          } else {
-            _abortDownload();
-            throw Exception('Enable to find downloadUrl.');
-          }
-        }
+
+          headlessWebView?.dispose();
+          _fetchVideo(downloadUrl);
+        } 
       },
     );
   }
 
-  void _fetchVideo(String downloadUrl, String cookie) async {
+  void _fetchVideo(String downloadUrl) async {
     final url = Uri.parse(downloadUrl);
     HttpClient client = HttpClient();
     downloaderProvider.setStatusGetVideo();
 
     try {
       final request = await client.getUrl(url);
-      request.headers.set(HttpHeaders.cookieHeader, cookie);
+
+      final cookies = (await cookieManager.getCookies(url: WebUri(tiktokCookieDomain)))
+        .map((co) => '${co.name}=${co.value}')
+        .join('; ');
+      log('cookie: $cookies');
+
+      request.headers.set(HttpHeaders.cookieHeader, cookies);
+      request.headers.set(HttpHeaders.userAgentHeader, "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...");
+      request.headers.set(HttpHeaders.refererHeader, "https://www.tiktok.com/");
 
       downloaderProvider.setStatusDetail('tiktok: Send video request');
       final response = await request.close();
@@ -128,7 +123,7 @@ class TiktokDownloader extends Downloader {
     } catch (e) {
       downloaderProvider.stopLoading();
       downloaderProvider.setStatusFailed();
-      rethrow;
+      throw Exception("fetchVideo Error($downloadUrl): ${e.toString()}");
     } finally {
       client.close();
     }
